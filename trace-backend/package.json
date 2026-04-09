@@ -1,0 +1,34 @@
+{
+  "name": "trace-backend",
+  "version": "2.0.0",
+  "description": "TRACE — Trace Reasoning And Context Engine. A real-time organizational intelligence system.",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js"
+  },
+  "keywords": [
+    "trace",
+    "ai",
+    "reasoning",
+    "context",
+    "intelligence",
+    "knowledge-graph",
+    "rag"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@langchain/community": "^1.1.27",
+    "@langchain/core": "^1.1.39",
+    "@langchain/openai": "^1.4.3",
+    "@langchain/textsplitters": "^1.0.1",
+    "chromadb": "^3.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "langchain": "^1.3.1",
+    "neo4j-driver": "^6.0.1",
+    "uuid": "^11.1.0"
+  }
+}
