@@ -1,89 +1,200 @@
-import { User, Zap, MessageSquare, AlertCircle } from 'lucide-react';
+import { User, Zap, MessageSquare, AlertCircle, ArrowRight, Network } from 'lucide-react';
 import { motion } from 'framer-motion';
+
+const nodes = [
+  {
+    id: 'person',
+    label: 'Dr. Ananya Rao',
+    sublabel: 'Lead Formulation Scientist',
+    icon: User,
+    color: 'blue',
+    bgClass: 'bg-blue-500/15 border-blue-500/25',
+    iconClass: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+  },
+  {
+    id: 'decision1',
+    label: 'Use Cellulose Binder',
+    sublabel: 'Decision',
+    icon: Zap,
+    color: 'primary',
+    bgClass: 'bg-primary/10 border-primary/30 shadow-glow-sm',
+    iconClass: 'bg-primary/20 text-primary border-primary/30',
+    highlight: true,
+  },
+  {
+    id: 'reason',
+    label: 'Lactose unstable >75% RH',
+    sublabel: 'Reasoning',
+    icon: MessageSquare,
+    color: 'secondary',
+    bgClass: 'bg-secondary/8 border-secondary/20',
+    iconClass: 'bg-secondary/20 text-secondary border-secondary/30',
+  },
+  {
+    id: 'person2',
+    label: 'Vikram Malhotra',
+    sublabel: 'VP Operations',
+    icon: User,
+    color: 'blue',
+    bgClass: 'bg-blue-500/15 border-blue-500/25',
+    iconClass: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+  },
+  {
+    id: 'decision2',
+    label: 'Switch to Lactose',
+    sublabel: 'Override Decision',
+    icon: Zap,
+    color: 'amber',
+    bgClass: 'bg-amber-500/10 border-amber-500/25',
+    iconClass: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+  },
+  {
+    id: 'event',
+    label: 'Tablet Disintegration',
+    sublabel: 'Downstream Event',
+    icon: AlertCircle,
+    color: 'red',
+    bgClass: 'bg-red-500/10 border-red-500/25',
+    iconClass: 'bg-red-500/20 text-red-400 border-red-500/30',
+  },
+];
+
+const edges = [
+  { from: 'person', to: 'decision1', label: 'MADE' },
+  { from: 'decision1', to: 'reason', label: 'BASED_ON' },
+  { from: 'person2', to: 'decision2', label: 'MADE' },
+  { from: 'decision2', to: 'event', label: 'CAUSED' },
+];
+
+function NodeCard({ node, delay }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.85, y: 10 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ delay, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className={`flex flex-col items-center rounded-2xl p-5 w-44 border backdrop-blur-sm transition-all hover:scale-[1.03] cursor-default ${node.bgClass}`}
+    >
+      <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-3 border ${node.iconClass}`}>
+        <node.icon className="w-5 h-5" />
+      </div>
+      <h3 className="font-semibold text-[13px] text-center text-gray-100 mb-1 leading-snug">{node.label}</h3>
+      <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md ${
+        node.highlight ? 'text-primary bg-primary/15' : 'text-gray-500'
+      }`}>
+        {node.sublabel}
+      </span>
+    </motion.div>
+  );
+}
+
+function EdgeConnector({ delay, color = 'gray' }) {
+  const gradients = {
+    gray: 'from-gray-700/60 to-gray-600/40',
+    primary: 'from-primary/50 to-secondary/40',
+    amber: 'from-amber-500/40 to-red-500/40',
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scaleX: 0 }}
+      animate={{ opacity: 1, scaleX: 1 }}
+      transition={{ delay, duration: 0.4 }}
+      className="flex items-center"
+    >
+      <div className={`hidden md:block w-10 h-[2px] bg-gradient-to-r ${gradients[color]} relative`}>
+        <div className={`absolute inset-0 bg-gradient-to-r ${gradients[color]} animate-pulse-glow`} />
+      </div>
+      <div className={`md:hidden h-8 w-[2px] bg-gradient-to-b ${gradients[color]}`} />
+      <ArrowRight className="w-3 h-3 text-gray-600 hidden md:block -ml-1" />
+    </motion.div>
+  );
+}
 
 export default function GraphView() {
   return (
     <div className="h-full flex flex-col p-6 md:p-10 relative overflow-hidden">
-      <div className="mb-10 z-10">
-        <h1 className="text-3xl font-bold mb-2">Decision Graph</h1>
-        <p className="text-gray-400">Visualizing the causal chain of decisions across the organization.</p>
-      </div>
 
-      <div className="flex-1 flex items-center justify-center relative z-10 w-full max-w-5xl mx-auto">
-        
-        {/* Simple static representation of a graph */}
-        <div className="flex flex-col md:flex-row items-center justify-center w-full gap-4 md:gap-0">
-          
-          {/* Person */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 }}
-            className="flex flex-col items-center bg-surface border border-gray-700 rounded-2xl p-6 w-48 shadow-xl relative z-20 group hover:border-primary/50 transition-colors"
-          >
-            <div className="w-12 h-12 bg-blue-500/20 text-blue-400 rounded-full flex items-center justify-center mb-4 border border-blue-500/30">
-              <User className="w-6 h-6" />
-            </div>
-            <h3 className="font-semibold text-center mb-1">Sarah Jenkins</h3>
-            <p className="text-xs text-gray-500 text-center">VP Engineering</p>
-          </motion.div>
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-8 z-10"
+      >
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center border border-primary/15 shadow-glow-sm">
+            <Network className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-100">Decision Graph</h1>
+            <p className="text-sm text-gray-500">Visualizing causal chains of organizational decisions</p>
+          </div>
+        </div>
+      </motion.div>
 
-          <div className="h-12 w-0.5 md:w-16 md:h-0.5 bg-gradient-to-b md:bg-gradient-to-r from-gray-700 to-primary/50 relative z-10 animate-pulse"></div>
+      {/* Graph visualization */}
+      <div className="flex-1 flex items-center justify-center relative z-10 w-full max-w-6xl mx-auto">
 
-          {/* Decision */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-col items-center bg-surface border border-primary/40 rounded-2xl p-6 w-56 shadow-[0_0_30px_rgba(99,102,241,0.1)] relative z-20"
-          >
-            <div className="w-12 h-12 bg-primary/20 text-primary rounded-full flex items-center justify-center mb-4 border border-primary/30">
-              <Zap className="w-6 h-6" />
-            </div>
-            <h3 className="font-semibold text-center mb-1">Pivot Phoenix Scope</h3>
-            <p className="text-xs text-primary/80 text-center px-2 bg-primary/10 rounded-full py-0.5 mb-2 mt-1">Decision</p>
-          </motion.div>
+        {/* Top Row: Person → Decision → Reason */}
+        <div className="flex flex-col gap-10 w-full">
+          {/* Chain 1 */}
+          <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-0">
+            <NodeCard node={nodes[0]} delay={0.1} />
+            <EdgeConnector delay={0.25} color="gray" />
+            <NodeCard node={nodes[1]} delay={0.35} />
+            <EdgeConnector delay={0.5} color="primary" />
+            <NodeCard node={nodes[2]} delay={0.6} />
+          </div>
 
-          <div className="h-12 w-0.5 md:w-16 md:h-0.5 bg-gradient-to-b md:bg-gradient-to-r from-primary/50 to-secondary/50 relative z-10 animate-pulse"></div>
+          {/* Connection line between chains */}
+          <div className="hidden md:flex justify-center">
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 32 }}
+              transition={{ delay: 0.7, duration: 0.3 }}
+              className="w-[2px] bg-gradient-to-b from-primary/20 via-amber-500/30 to-amber-500/20"
+            />
+          </div>
 
-          {/* Reason */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5 }}
-            className="flex flex-col items-center bg-surface border border-gray-700 rounded-xl p-5 w-48 shadow-xl relative z-20 group hover:border-secondary/50 transition-colors"
-          >
-             <div className="w-10 h-10 bg-secondary/20 text-secondary rounded-full flex items-center justify-center mb-3 border border-secondary/30">
-              <MessageSquare className="w-5 h-5" />
-            </div>
-            <h3 className="font-medium text-sm text-center mb-1">Focus on throughput over latency</h3>
-            <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-2">Reasoning</p>
-          </motion.div>
-
-          <div className="h-12 w-0.5 md:w-16 md:h-0.5 bg-gradient-to-b md:bg-gradient-to-r from-secondary/50 to-orange-500/50 relative z-10 animate-pulse"></div>
-
-          {/* Event */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.7 }}
-            className="flex flex-col items-center bg-surface border border-gray-700 rounded-xl p-5 w-48 shadow-xl relative z-20 group hover:border-orange-500/50 transition-colors"
-          >
-            <div className="w-10 h-10 bg-orange-500/20 text-orange-400 rounded-full flex items-center justify-center mb-3 border border-orange-500/30">
-              <AlertCircle className="w-5 h-5" />
-            </div>
-            <h3 className="font-medium text-sm text-center mb-1">Latency spikes in Q3 staging</h3>
-            <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-2">Downstream Event</p>
-          </motion.div>
-
+          {/* Chain 2 */}
+          <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-0">
+            <NodeCard node={nodes[3]} delay={0.8} />
+            <EdgeConnector delay={0.9} color="gray" />
+            <NodeCard node={nodes[4]} delay={1.0} />
+            <EdgeConnector delay={1.1} color="amber" />
+            <NodeCard node={nodes[5]} delay={1.2} />
+          </div>
         </div>
       </div>
 
-      {/* Decorative background grid */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0)`,
-        backgroundSize: '40px 40px'
-      }}></div>
+      {/* Legend */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.4 }}
+        className="mt-8 flex flex-wrap items-center justify-center gap-4 text-[11px] font-medium text-gray-500 z-10"
+      >
+        {[
+          { color: 'bg-blue-400', label: 'Person' },
+          { color: 'bg-primary', label: 'Decision' },
+          { color: 'bg-secondary', label: 'Reason' },
+          { color: 'bg-amber-400', label: 'Override' },
+          { color: 'bg-red-400', label: 'Event' },
+        ].map((item) => (
+          <span key={item.label} className="flex items-center gap-1.5">
+            <div className={`w-2 h-2 rounded-full ${item.color}`} />
+            {item.label}
+          </span>
+        ))}
+      </motion.div>
+
+      {/* Background grid */}
+      <div className="absolute inset-0 pointer-events-none z-0" style={{
+        backgroundImage: `radial-gradient(circle at 1.5px 1.5px, rgba(255,255,255,0.03) 1px, transparent 0)`,
+        backgroundSize: '32px 32px'
+      }} />
+
+      {/* Ambient glow */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-primary/[0.02] rounded-full blur-[150px] pointer-events-none z-0" />
     </div>
   );
 }
