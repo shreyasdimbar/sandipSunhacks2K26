@@ -1,0 +1,18 @@
+# Set default behavior to handle all files as text and force LF in the repo
+* text=auto
+
+# Explicitly declare text files you want to always be LF or CRLF
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+
+# Denote all files that are truly binary and should not be modified
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
